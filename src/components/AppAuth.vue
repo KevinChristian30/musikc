@@ -15,7 +15,7 @@
         <div class="py-4 text-left px-6">
           <div class="flex justify-between items-center pb-4">
             <p class="text-2xl font-bold">Your Account</p>
-            <div class="modal-close cursor-pointer z-50" @click="isOpen = false">
+            <div class="modal-close cursor-pointer z-50" @click="modalVisibility = false">
               <i class="fas fa-times"></i>
             </div>
           </div>
@@ -23,17 +23,29 @@
           <ul class="flex flex-wrap mb-4">
             <li class="flex-auto text-center">
               <a
-                class="block rounded py-3 px-4 transition hover:text-white text-white bg-blue-600"
+                class="block rounded py-3 px-4 transition"
+                :class="[
+                  isLogin ? 'hover:text-white text-white bg-blue-600' : 'hover:text-blue-600'
+                ]"
                 href="#"
+                @click.prevent="isLogin = true"
                 >Login</a
               >
             </li>
             <li class="flex-auto text-center">
-              <a class="block rounded py-3 px-4 transition" href="#">Register</a>
+              <a
+                class="block rounded py-3 px-4 transition"
+                :class="[
+                  !isLogin ? 'hover:text-white text-white bg-blue-600' : 'hover:text-blue-600'
+                ]"
+                href="#"
+                @click.prevent="isLogin = false"
+                >Register</a
+              >
             </li>
           </ul>
 
-          <form>
+          <form v-if="isLogin">
             <div class="mb-3">
               <label class="inline-block mb-2">Email</label>
               <input
@@ -60,14 +72,16 @@
             </button>
           </form>
 
-          <form>
+          <vee-form v-else :validation-schema="schema">
             <div class="mb-3">
               <label class="inline-block mb-2">Name</label>
-              <input
+              <vee-field
                 type="text"
+                name="name"
                 class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
                 placeholder="Enter Name"
               />
+              <error-message class="text-red-500" name="name" />
             </div>
 
             <div class="mb-3">
@@ -126,7 +140,7 @@
             >
               Submit
             </button>
-          </form>
+          </vee-form>
         </div>
       </div>
     </div>
@@ -139,9 +153,25 @@ import useModalStore from '@/stores/modal';
 
 export default {
   name: 'AppAuth',
+  data() {
+    return {
+      isLogin: Boolean,
+      schema: {
+        name: 'required',
+        email: '',
+        age: '',
+        password: '',
+        confirm_password: '',
+        country: '',
+        tos: ''
+      }
+    };
+  },
   computed: {
     ...mapState(useModalStore, ['hiddenClass']),
-    ...mapWritableState(useModalStore, ['isOpen'])
+    ...mapWritableState(useModalStore, {
+      modalVisibility: 'isOpen'
+    })
   }
 };
 </script>
