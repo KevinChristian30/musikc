@@ -20,10 +20,18 @@ export default defineStore('user', {
       });
 
       await userCredentials.user?.updateProfile({
-        displayName: values.name,
+        displayName: values.name
       });
 
       this.userLoggedIn = true;
+    },
+    async authenticate(values: any) {
+      await auth.signInWithEmailAndPassword(values.email, values.password);
+      this.userLoggedIn = true;
+    },
+    async signOut() {
+      await auth.signOut();
+      this.userLoggedIn = false;
     }
   }
 });

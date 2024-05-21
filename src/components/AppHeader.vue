@@ -5,14 +5,17 @@
 
       <div class="flex flex-grow items-center justify-end">
         <ul class="flex flex-row mt-1">
-          <li>
+          <li v-if="!userLoggedIn">
+            <a class="px-2 text-white" href="#" @click.prevent="toggleAuthModal"
+              >Login / Register</a
+            >
+          </li>
+          <template v-else>
             <a class="px-2 text-white" href="#">Manage</a>
-          </li>
-          <li>
-            <a class="px-2 text-white" href="#" @click.prevent="toggleAuthModal">{{
-              userLoggedIn ? 'Logout' : 'Login / Register'
-            }}</a>
-          </li>
+            <li>
+              <a class="px-2 text-white" href="#" @click.prevent="logOut">Logout</a>
+            </li>
+          </template>
         </ul>
       </div>
     </nav>
@@ -20,7 +23,7 @@
 </template>
 
 <script>
-import { mapStores, mapState } from 'pinia';
+import { mapStores, mapState, mapActions } from 'pinia';
 import useModalStore from '@/stores/modal';
 import userUserStore from '@/stores/user';
 
@@ -31,8 +34,14 @@ export default {
     ...mapState(userUserStore, ['userLoggedIn'])
   },
   methods: {
+    ...mapActions(userUserStore, ['signOut']),
     toggleAuthModal() {
       this.modalStore.isOpen = !this.modalStore.isOpen;
+    },
+    async logOut() {
+      await this.signOut();
+
+      window.location.reload();
     }
   }
 };

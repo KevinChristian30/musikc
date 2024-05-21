@@ -105,7 +105,7 @@
 
 <script>
 import useUserStore from '@/stores/user';
-import { mapWritableState, mapActions } from 'pinia';
+import { mapActions } from 'pinia';
 
 export default {
   name: 'RegisterForm',
@@ -148,6 +148,8 @@ export default {
 
       this.reg_alert_variant = 'bg-green-500';
       this.reg_alert_msg = 'Success, your account has been created';
+
+      window.location.reload();
     }
   }
 };
