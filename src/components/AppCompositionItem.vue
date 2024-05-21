@@ -2,7 +2,10 @@
   <div class="border border-gray-200 p-3 mb-4 rounded">
     <div v-show="!showForm">
       <h4 class="inline-block text-2xl font-bold">{{ song.modified_name }}</h4>
-      <button class="ml-1 py-1 px-2 text-sm rounded text-white bg-red-600 float-right">
+      <button
+        class="ml-1 py-1 px-2 text-sm rounded text-white bg-red-600 float-right"
+        @click.prevent="deleteSong"
+      >
         <i class="fa fa-times"></i>
       </button>
       <button
@@ -64,7 +67,7 @@
 </template>
 
 <script>
-import { songsCollection } from '@/plugins/firebase';
+import { songsCollection, storage } from '@/plugins/firebase';
 
 export default {
   name: 'AppCompositionItem',
@@ -78,6 +81,10 @@ export default {
       required: true
     },
     updateParentSong: {
+      type: Function,
+      required: true
+    },
+    deleteParentSong: {
       type: Function,
       required: true
     }
@@ -129,6 +136,15 @@ export default {
       this.alertMessage = 'Song updated';
       this.updateParentSong(this.index, values);
       setTimeout(this.resetAlert, 2000);
+    },
+    async deleteSong() {
+      const storageRef = storage.ref();
+      const songsRef = storageRef.child(`songs/${this.song.original_name}`);
+
+      await songsRef.delete(this.song.id);
+      await songsCollection.doc(this.song.id).delete();
+
+      this.deleteParentSong(this.index);
     }
   }
 };
