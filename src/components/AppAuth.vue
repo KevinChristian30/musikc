@@ -15,7 +15,7 @@
         <div class="py-4 text-left px-6">
           <div class="flex justify-between items-center pb-4">
             <p class="text-2xl font-bold">Your Account</p>
-            <div class="modal-close cursor-pointer z-50" @click="isOpen = false">
+            <div class="modal-close cursor-pointer z-50" @click="modalVisibility = false">
               <i class="fas fa-times"></i>
             </div>
           </div>
@@ -23,110 +23,31 @@
           <ul class="flex flex-wrap mb-4">
             <li class="flex-auto text-center">
               <a
-                class="block rounded py-3 px-4 transition hover:text-white text-white bg-blue-600"
+                class="block rounded py-3 px-4 transition"
+                :class="[
+                  isLogin ? 'hover:text-white text-white bg-blue-600' : 'hover:text-blue-600'
+                ]"
                 href="#"
+                @click.prevent="isLogin = true"
                 >Login</a
               >
             </li>
             <li class="flex-auto text-center">
-              <a class="block rounded py-3 px-4 transition" href="#">Register</a>
+              <a
+                class="block rounded py-3 px-4 transition"
+                :class="[
+                  !isLogin ? 'hover:text-white text-white bg-blue-600' : 'hover:text-blue-600'
+                ]"
+                href="#"
+                @click.prevent="isLogin = false"
+                >Register</a
+              >
             </li>
           </ul>
 
-          <form>
-            <div class="mb-3">
-              <label class="inline-block mb-2">Email</label>
-              <input
-                type="email"
-                class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
-                placeholder="Enter Email"
-              />
-            </div>
+          <login-form v-if="isLogin"></login-form>
 
-            <div class="mb-3">
-              <label class="inline-block mb-2">Password</label>
-              <input
-                type="password"
-                class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
-                placeholder="Password"
-              />
-            </div>
-
-            <button
-              type="submit"
-              class="block w-full bg-purple-600 text-white py-1.5 px-3 rounded transition hover:bg-purple-700"
-            >
-              Submit
-            </button>
-          </form>
-
-          <form>
-            <div class="mb-3">
-              <label class="inline-block mb-2">Name</label>
-              <input
-                type="text"
-                class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
-                placeholder="Enter Name"
-              />
-            </div>
-
-            <div class="mb-3">
-              <label class="inline-block mb-2">Email</label>
-              <input
-                type="email"
-                class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
-                placeholder="Enter Email"
-              />
-            </div>
-
-            <div class="mb-3">
-              <label class="inline-block mb-2">Age</label>
-              <input
-                type="number"
-                class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
-              />
-            </div>
-
-            <div class="mb-3">
-              <label class="inline-block mb-2">Password</label>
-              <input
-                type="password"
-                class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
-                placeholder="Password"
-              />
-            </div>
-
-            <div class="mb-3">
-              <label class="inline-block mb-2">Confirm Password</label>
-              <input
-                type="password"
-                class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
-                placeholder="Confirm Password"
-              />
-            </div>
-
-            <div class="mb-3">
-              <label class="inline-block mb-2">Country</label>
-              <select
-                class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
-              >
-                <option value="USA">USA</option>
-                <option value="Mexico">Mexico</option>
-                <option value="Germany">Germany</option>
-              </select>
-            </div>
-
-            <div class="mb-3 pl-6">
-              <input type="checkbox" class="w-4 h-4 float-left -ml-6 mt-1 rounded" />
-              <label class="inline-block">Accept terms of service</label>
-            </div>
-            <button
-              type="submit"
-              class="block w-full bg-purple-600 text-white py-1.5 px-3 rounded transition hover:bg-purple-700"
-            >
-              Submit
-            </button>
-          </form>
+          <register-form v-else></register-form>
         </div>
       </div>
     </div>
@@ -136,12 +57,45 @@
 <script>
 import { mapState, mapWritableState } from 'pinia';
 import useModalStore from '@/stores/modal';
+import RegisterForm from './forms/RegisterForm.vue';
+import LoginForm from './forms/LoginForm.vue';
 
 export default {
   name: 'AppAuth',
+  data() {
+    return {
+      isLogin: Boolean,
+      registerSchema: {
+        name: 'required|min:3|max:100|alpha_spaces',
+        email: 'required|min:3|max:100|email',
+        age: 'required|min_value:10|max_value:130',
+        password: 'required|min:8|max:100',
+        confirm_password: 'confirmed:@password',
+        country: 'required',
+        tos: 'required'
+      },
+      loginSchema: {
+        email: 'required|min:3|max:100|email',
+        password: 'required'
+      },
+      initialFormValues: {
+        country: 'Indonesia'
+      },
+      reg_loading: false,
+      reg_show_alert: false,
+      reg_alert_variant: 'bg-blue-500',
+      reg_alert_msg: 'Your account is being created'
+    };
+  },
   computed: {
     ...mapState(useModalStore, ['hiddenClass']),
-    ...mapWritableState(useModalStore, ['isOpen'])
+    ...mapWritableState(useModalStore, {
+      modalVisibility: 'isOpen'
+    })
+  },
+  components: {
+    RegisterForm,
+    LoginForm
   }
 };
 </script>
