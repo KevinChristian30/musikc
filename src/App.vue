@@ -1,12 +1,9 @@
 <template>
   <app-header></app-header>
 
-  <app-introduction></app-introduction>
-
-  <app-main-content></app-main-content>
+  <router-view></router-view>
 
   <app-player></app-player>
-
   <app-auth></app-auth>
 </template>
 
@@ -25,8 +22,6 @@ export default {
   components: {
     AppHeader,
     AppAuth,
-    AppIntroduction,
-    AppMainContent,
     AppPlayer
   },
   computed: {
