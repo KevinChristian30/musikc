@@ -134,6 +134,7 @@ export default {
       this.inSubmission = false;
       this.alertVariant = 'bg-green-500';
       this.alertMessage = 'Song updated';
+
       this.updateParentSong(this.index, values);
       setTimeout(this.resetAlert, 2000);
     },

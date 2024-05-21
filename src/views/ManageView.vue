@@ -2,7 +2,7 @@
   <section class="container mx-auto mt-6">
     <div class="md:grid md:grid-cols-3 md:gap-4">
       <div class="col-span-1">
-        <app-upload></app-upload>
+        <app-upload :addSong="addSong"></app-upload>
       </div>
 
       <div class="col-span-2">
@@ -43,6 +43,14 @@ export default {
     };
   },
   methods: {
+    addSong(document) {
+      const song = {
+        ...document.data(),
+        id: document.id
+      };
+
+      this.songs.push(song);
+    },
     updateSong(index, values) {
       this.songs[index].modified_name = values.modified_name;
       this.songs[index].genre = values.genre;
@@ -53,14 +61,7 @@ export default {
   },
   async created() {
     const snapshot = await songsCollection.where('uid', '==', auth.currentUser.uid).get();
-    snapshot.forEach((document) => {
-      const song = {
-        ...document.data(),
-        id: document.id
-      };
-
-      this.songs.push(song);
-    });
+    snapshot.forEach((document) => this.addSong(document));
   }
 };
 </script>
