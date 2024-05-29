@@ -1,7 +1,9 @@
 <template>
-  <app-introduction></app-introduction>
+  <main>
+    <app-introduction></app-introduction>
 
-  <app-main-content :songs="songs"></app-main-content>
+    <app-main-content :songs="songs"></app-main-content>
+  </main>
 </template>
 
 <script>
