@@ -8,9 +8,8 @@ import router from './router';
 import VeeValidatePlugin from './plugins/validation';
 import Icon from './directives/icon';
 import { auth } from './plugins/firebase';
-
 import './assets/base.css';
-import './assets/main.css';
+import i18n from './plugins/i18n';
 
 let app;
 
@@ -20,6 +19,7 @@ auth.onAuthStateChanged(() => {
   app.use(createPinia());
   app.use(router);
   app.use(VeeValidatePlugin);
+  app.use(i18n);
 
   app.directive('icon', Icon);
 
