@@ -1,5 +1,6 @@
 import HomeView from '@/views/HomeView.vue';
 import ManageView from '@/views/ManageView.vue';
+import SongView from '@/views/SongView.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import useUserStore from '@/stores/user';
 
@@ -13,12 +14,14 @@ const routes = [
     name: 'manage',
     path: '/manage',
     component: ManageView,
-    beforeEnter: (to, from, next) => {
-      next();
-    },
     meta: {
       requiresAuth: true
     }
+  },
+  {
+    name: 'songs',
+    path: '/songs/:id',
+    component: SongView
   },
   {
     path: '/manage-music',
