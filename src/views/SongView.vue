@@ -172,19 +172,21 @@ export default {
       });
     }
   },
-  async created() {
-    const docSnapshot = await songsCollection.doc(this.$route.params.id).get();
+  async beforeRouteEnter(to, from, next) {
+    const docSnapshot = await songsCollection.doc(to.params.id).get();
 
-    if (!docSnapshot.exists) {
-      this.$router.push({ name: 'home' });
-      return;
-    }
+    next(async (vm) => {
+      if (!docSnapshot.exists) {
+        vm.$router.push({ name: 'home' });
+        return;
+      }
 
-    const { order } = this.$route.query;
-    this.order = order === '1' || order === '2' ? order : '1';
+      const { order } = vm.$route.query;
+      vm.order = order === '1' || order === '2' ? order : '1';
 
-    this.song = docSnapshot.data();
-    await this.getComments();
+      vm.song = docSnapshot.data();
+      await vm.getComments();
+    });
   },
   watch: {
     order(newVal) {
