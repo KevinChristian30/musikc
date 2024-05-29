@@ -23,7 +23,9 @@
     <section class="container mx-auto mt-6" id="comments">
       <div class="bg-white rounded border border-gray-200 relative flex flex-col">
         <div class="px-6 pt-6 pb-5 font-bold border-b border-gray-200">
-          <span class="card-title">Comments {{ song.comment_count }}</span>
+          <span class="card-title">{{
+            $tc('song.comment_count', { count: song.comment_count })
+          }}</span>
           <i class="fa fa-comments float-right text-green-400 text-2xl"></i>
         </div>
         <div class="p-6">
@@ -170,19 +172,21 @@ export default {
       });
     }
   },
-  async created() {
-    const docSnapshot = await songsCollection.doc(this.$route.params.id).get();
+  async beforeRouteEnter(to, from, next) {
+    const docSnapshot = await songsCollection.doc(to.params.id).get();
 
-    if (!docSnapshot.exists) {
-      this.$router.push({ name: 'home' });
-      return;
-    }
+    next(async (vm) => {
+      if (!docSnapshot.exists) {
+        vm.$router.push({ name: 'home' });
+        return;
+      }
 
-    const { order } = this.$route.query;
-    this.order = order === '1' || order === '2' ? order : '1';
+      const { order } = vm.$route.query;
+      vm.order = order === '1' || order === '2' ? order : '1';
 
-    this.song = docSnapshot.data();
-    await this.getComments();
+      vm.song = docSnapshot.data();
+      await vm.getComments();
+    });
   },
   watch: {
     order(newVal) {

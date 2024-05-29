@@ -1,8 +1,9 @@
-import HomeView from '@/views/HomeView.vue';
-import ManageView from '@/views/ManageView.vue';
-import SongView from '@/views/SongView.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import useUserStore from '@/stores/user';
+
+const HomeView = () => import('@/views/HomeView.vue');
+const ManageView = () => import('@/views/ManageView.vue');
+const SongView = () => import('@/views/SongView.vue');
 
 const routes = [
   {
