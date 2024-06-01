@@ -1,4 +1,4 @@
-# musiKC
+# MusiKC
 
 ## Recommended IDE Setup
 
